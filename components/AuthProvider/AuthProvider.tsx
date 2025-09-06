@@ -9,9 +9,7 @@ interface AuthProviderProps {
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const setUser = useAuthStore(state => state.setUser);
-  const clearisAuthenticated = useAuthStore(
-    state => state.clearisAuthenticated
-  );
+  const clearAuth = useAuthStore(state => state.clearAuth);
   useEffect(() => {
     const fetchUser = async () => {
       const isAuthenticated = await checkSession();
@@ -21,12 +19,12 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
           setUser(user);
         }
       } else {
-        clearisAuthenticated();
+        clearAuth();
       }
     };
 
     fetchUser();
-  }, [setUser, clearisAuthenticated]);
+  }, [setUser, clearAuth]);
   return children;
 };
 

@@ -8,10 +8,10 @@ import { useRouter } from 'next/navigation';
 
 const AuthNavigation = () => {
   const router = useRouter();
-  const { user, isAuthenticated, clearisAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, clearAuth } = useAuthStore();
   const handleClickLogOut = async () => {
     await logout();
-    clearisAuthenticated();
+    clearAuth();
     router.push('/sign-in');
   };
   // console.log(user?.avatar);
