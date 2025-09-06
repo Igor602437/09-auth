@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import css from './Header.module.css';
-import TagsMenu from '../TagsMenu/TagsMenu';
+// import TagsMenu from '../TagsMenu/TagsMenu';
+import AuthNavigation from '../AuthNavigation/AuthNavigation';
 
 const Header = () => {
   return (
@@ -15,9 +18,10 @@ const Header = () => {
               Home
             </Link>
           </li>
-          <li className={css.navigationItem}>
+          {/* <li className={css.navigationItem}>
             <TagsMenu />
-          </li>
+          </li> */}
+          <AuthNavigation />
         </ul>
       </nav>
     </header>
