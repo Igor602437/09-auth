@@ -2,11 +2,6 @@ import { createPortal } from 'react-dom';
 import css from './Modal.module.css';
 import React, { useEffect } from 'react';
 
-let modalRoot: HTMLElement | null = null;
-if (typeof window !== 'undefined') {
-  modalRoot = document.getElementById('modalRoot');
-}
-
 interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;

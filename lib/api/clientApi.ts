@@ -73,7 +73,6 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
 
 export const createNote = async (newTask: NewNote): Promise<Note> => {
   const createNoteResponse = await nextServer.post<Note>('/notes', newTask);
-  // console.log(createNoteResponse.data);
   return createNoteResponse.data;
 };
 

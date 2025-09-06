@@ -1,38 +1,42 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
 import css from './EditProfilePage.module.css';
-import { getMe, updateUser } from '@/lib/api/clientApi';
 import Image from 'next/image';
-import { User } from '@/types/user';
+import { useAuthStore } from '@/lib/store/authStore';
+import { useState } from 'react';
+import { updateUser } from '@/lib/api/clientApi';
 
 const EditProfile = () => {
+  const user = useAuthStore(s => s.user);
+  const setUser = useAuthStore(s => s.setUser);
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const userData = await getMe();
-      setUser(userData);
-    };
-    loadUser();
-  }, []);
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      setError(null);
+      const raw = formData.get('username');
+      const username = typeof raw === 'string' ? raw.trim() : '';
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUser(prev => (prev ? { ...prev, username: event.target.value } : prev));
+      if (!username) {
+        console.log(username);
+        setError('Enter username');
+        return;
+      }
+      if (user?.username === username) {
+        router.push('/profile');
+        return;
+      }
+
+      const updatedUser = await updateUser({ username });
+      setUser(updatedUser);
+      router.push('/profile');
+    } catch (err) {
+      console.error(err);
+      setError('Profile update failed');
+    }
   };
-
-  const handleSaveUser = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!user) return;
-
-    const updatedUser = await updateUser({ username: user.username });
-    setUser(updatedUser);
-    router.push('/profile');
-  };
-
-  if (!user) return <p>Loading...</p>;
 
   return (
     <main className={css.mainContent}>
@@ -40,27 +44,27 @@ const EditProfile = () => {
         <h1 className={css.formTitle}>Edit Profile</h1>
 
         <Image
-          src={user.avatar}
-          alt={user.username}
+          src={user?.avatar || '/default-avatar.png'}
+          alt={user?.username || 'User Avatar'}
           width={120}
           height={120}
           className={css.avatar}
           priority
         />
 
-        <form className={css.profileInfo} onSubmit={handleSaveUser}>
+        <form className={css.profileInfo} action={handleSubmit}>
           <div className={css.usernameWrapper}>
             <label htmlFor="username">Username:</label>
             <input
               id="username"
               type="text"
               className={css.input}
-              defaultValue={user.username ?? ''}
-              onChange={handleChange}
+              name="username"
+              defaultValue={user?.username ?? ''}
             />
           </div>
 
-          <p>Email: {user.email}</p>
+          <p>Email: {user?.email}</p>
 
           <div className={css.actions}>
             <button type="submit" className={css.saveButton}>
@@ -75,6 +79,7 @@ const EditProfile = () => {
             </button>
           </div>
         </form>
+        {error && <p className={css.error}>{error}</p>}
       </div>
     </main>
   );
