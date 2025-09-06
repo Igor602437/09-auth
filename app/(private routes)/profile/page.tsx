@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 
 const Profile = async () => {
   const user = await getMe();
-  // console.log(user);
 
   return (
     <main className={css.mainContent}>
